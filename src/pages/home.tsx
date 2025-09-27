@@ -235,7 +235,7 @@ export const Home = () => {
                         }
                     </div>
                 )}
-                {load && <span style={{ display: "block", margin: "12px 0", color: "#888" }}>Processando...</span>}
+                {loadlist && <span style={{ display: "block", margin: "12px 0", color: "#888" }}>Processando a lista...</span>}
                 {image2 && (
                     <img src={image2} alt="Foto tirada" style={{ width: "100%", marginTop: 16, borderRadius: 8, border: "1px solid #ccc" }} />
                 )}
