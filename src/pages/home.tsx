@@ -96,26 +96,39 @@ export const Home = () => {
     };
 
     return (
-        <div>
-            <ul>
+        <div style={{ maxWidth: 400, margin: "40px auto", padding: 24, border: "1px solid #ddd", borderRadius: 8, background: "#fafafa" }}>
+            <ul style={{ listStyle: "none", padding: 0 }}>
                 {list.map((item, index) => {
-                    return <li key={item.productName}>
-                        {item.productName} - {item.unitPrice} quantidade: {item.quantidade}<br />
-                        <button onClick={() => {
-                            setList(list.filter((_, i) => i !== index))
-                            const newTotal = list.filter((_, i) => i !== index).reduce((acc, item) => {
-                                return acc + parseFloat(item.price.replace(',', '.'))
-                            }, 0)
-                            setTotal(newTotal)
-                        }}>deletar</button>
-                    </li>
+                    return (
+                        <li key={item.productName} style={{ marginBottom: 16, padding: 12, border: "1px solid #eee", borderRadius: 6, background: "#fff", display: "flex", flexDirection: "column", gap: 4 }}>
+                            <span style={{ fontWeight: "bold" }}>{item.productName}</span>
+                            <span>Preço unitário: <b>{item.unitPrice}</b></span>
+                            <span>Quantidade: <b>{item.quantidade}</b></span>
+                            <button
+                                style={{ marginTop: 8, padding: "6px 12px", background: "#e74c3c", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" }}
+                                onClick={() => {
+                                    setList(list.filter((_, i) => i !== index))
+                                    const newTotal = list.filter((_, i) => i !== index).reduce((acc, item) => {
+                                        return acc + parseFloat(item.price.replace(',', '.'))
+                                    }, 0)
+                                    setTotal(newTotal)
+                                }}
+                            >
+                                Deletar
+                            </button>
+                        </li>
+                    )
                 })}
             </ul>
-            <h1>{total.toFixed(2)}</h1>
-            {/* <button onClick={() => processProduct(image1)}>image1</button> */}
-            <button onClick={handleOpenCamera}>Adicionar um novo produto</button>
+            <h1 style={{ textAlign: "center", color: "#2ecc71", margin: "24px 0 16px" }}>Total: R$ {total.toFixed(2)}</h1>
+            <button
+                style={{ display: "block", width: "100%", padding: "10px 0", background: "#3498db", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, cursor: "pointer", marginBottom: 16 }}
+                onClick={handleOpenCamera}
+            >
+                Adicionar um novo produto
+            </button>
             {cameraOpen && (
-                <div>
+                <div style={{ marginBottom: 16, textAlign: "center" }}>
                     <Camera
                         ref={camera}
                         facingMode='environment'
@@ -128,15 +141,19 @@ export const Home = () => {
                         }}
                     />
                     {
-                        load ? <span>Processando...</span>
-                            : <button onClick={handleTakePhoto}>Tirar foto</button>
+                        load ? <span style={{ display: "block", margin: "12px 0", color: "#888" }}>Processando...</span>
+                            : <button
+                                style={{ marginTop: 12, padding: "8px 16px", background: "#27ae60", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" }}
+                                onClick={handleTakePhoto}
+                            >
+                                Tirar foto
+                            </button>
                     }
-
                 </div>
             )}
-            {load && <span>Processando...</span>}
+            {load && <span style={{ display: "block", margin: "12px 0", color: "#888" }}>Processando...</span>}
             {image && (
-                <img src={image} alt="Foto tirada" />
+                <img src={image} alt="Foto tirada" style={{ width: "100%", marginTop: 16, borderRadius: 8, border: "1px solid #ccc" }} />
             )}
         </div>
     );
