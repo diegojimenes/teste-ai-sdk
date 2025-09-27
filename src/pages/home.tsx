@@ -27,38 +27,52 @@ export const Home = () => {
     };
 
     const processProduct = async (photo?: string) => {
-        const result = await generateText({
-            model: gemma,
-            system:
-                `você é um assistente de compra` +
-                `você vai receber uma imagem de uma etiqueta de preço de um produto e extrair o preço e o nome` +
-                `você deve responder apenas com o nome do produto e o preço, sem explicações` +
-                `se não conseguir identificar o produto, responda apenas com "Produto não identificado"` +
-                `se não conseguir identificar o preço, responda apenas com "Preço não identificado"` +
-                `caso tenha preço para atacado e varejo sempre escolha o preço do varejo` +
-                `se não conseguir identificar nenhum dos dois, responda apenas com "Produto e preço não identificados"` +
-                `sempre responda no formato: {"productName": nome do produto, "price": preço} para o preço sempre use ponto em vez de virgula ex: 99.99 1.00 999.000.999"`,
-            messages: [
-                {
-                    role: 'user',
-                    content: [
-                        {
-                            type: 'image',
-                            image: photo
-                        },
-                    ],
-                },
-            ]
-        });
+        try {
+            setLoad(true)
+            const result = await generateText({
+                model: gemma,
+                system:
+                    `você é um assistente de compra` +
+                    `você vai receber uma imagem de uma etiqueta de preço de um produto e extrair o preço e o nome` +
+                    `você deve responder apenas com o nome do produto e o preço, sem explicações` +
+                    `se não conseguir identificar o produto, responda apenas com "Produto não identificado"` +
+                    `se não conseguir identificar o preço, responda apenas com "Preço não identificado"` +
+                    `caso tenha preço para atacado e varejo sempre escolha o preço do varejo` +
+                    `se não conseguir identificar nenhum dos dois, responda apenas com "Produto e preço não identificados"` +
+                    `sempre responda no formato: {"productName": nome do produto, "price": preço} para o preço sempre use ponto em vez de virgula ex: 99.99 1.00 999.000.999"`,
+                messages: [
+                    {
+                        role: 'user',
+                        content: [
+                            {
+                                type: 'image',
+                                image: photo
+                            },
+                        ],
+                    },
+                ]
+            });
 
-        const response = result.content.map((c: any) => c?.text ?? '').join('')
-        const newList = [...list, { ...JSON.parse(response) }]
+            const response = result.content.map((c: any) => c?.text ?? '').join('')
+            if (response.includes("Produto não identificado")
+                || response.includes("Preço não identificado")
+                || response.includes("Produto e preço não identificados")) {
+                alert("Não foi possível identificar o produto ou o preço, tente novamente");
+                return;
+            }
 
-        const newTotal = newList.reduce((acc, item) => {
-            return acc + parseFloat(item.price.replace(',', '.'))
-        }, 0)
-        setTotal(newTotal)
-        setList(newList)
+            const newList = [...list, { ...JSON.parse(response) }]
+
+            const newTotal = newList.reduce((acc, item) => {
+                return acc + parseFloat(item.price.replace(',', '.'))
+            }, 0)
+            setTotal(newTotal)
+            setList(newList)
+        } catch (error) {
+            alert("Error processing product");
+        } finally {
+            setLoad(false)
+        }
     };
 
     return (
