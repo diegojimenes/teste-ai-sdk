@@ -121,7 +121,7 @@ export const Home = () => {
             setTotal(newTotal)
             setList(newList)
 
-            await checkListItes(checkList, newList)
+            // await checkListItes(checkList, newList)
         } catch (error) {
             alert("Error processing product");
         } finally {
