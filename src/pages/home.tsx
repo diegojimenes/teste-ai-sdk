@@ -130,7 +130,7 @@ export const Home = () => {
 
     useEffect(() => {
         const saved = localStorage.getItem('list')
-        alert(saved)
+
         if (saved) {
             const list = JSON.parse(saved)
             setList(list)
@@ -153,11 +153,13 @@ export const Home = () => {
                             <button
                                 style={{ marginTop: 8, padding: "6px 12px", background: "#e74c3c", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" }}
                                 onClick={() => {
-                                    setList(list.filter((_, i) => i !== index))
-                                    const newTotal = list.filter((_, i) => i !== index).reduce((acc, item) => {
+                                    const newList = list.filter((_, i) => i !== index)
+                                    setList(newList)
+                                    const newTotal = newList.reduce((acc, item) => {
                                         return acc + parseFloat(item.price.replace(',', '.'))
                                     }, 0)
                                     setTotal(newTotal)
+                                    localStorage.setItem('list', JSON.stringify(newList))
                                 }}
                             >
                                 Deletar
