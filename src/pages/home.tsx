@@ -6,11 +6,12 @@ import { gemma } from "../providers/lmstudio";
 export const Home = () => {
     const camera = useRef<any>(null);
     const [image, setImage] = useState<string | null>(null);
-    const [image2, setImage2] = useState<string | null>(null);
     const [cameraOpen, setCameraOpen] = useState(false);
-    const [cameraOpen2, setCameraOpen2] = useState(false);
     const [load, setLoad] = useState(false);
-    const [loadlist, setLoalist] = useState(false);
+    const [checkList, setCheckList] = useState<{
+        name: string;
+        quantidade: number;
+    }[]>([]);
     const [list, setList] = useState<{
         productName: string;
         price: string;
@@ -25,9 +26,7 @@ export const Home = () => {
     };
 
 
-    const handleOpenCamera2 = async () => {
-        setCameraOpen2(true);
-    };
+
 
     const handleTakePhoto = () => {
         if (camera.current) {
@@ -37,45 +36,6 @@ export const Home = () => {
             processProduct(photo);
         }
     };
-
-    const handleTakePhotoToList = () => {
-        if (camera.current) {
-            const photo = camera.current.takePhoto();
-            setImage2(photo);
-            setCameraOpen2(false);
-            analizeList(photo);
-        }
-    };
-
-    const analizeList = async (photo?: string) => {
-        try {
-            setLoalist(true)
-            const result = await generateText({
-                model: gemma,
-                system:
-                    `você é um assistente de compra` +
-                    `você vai receber uma imagem de uma lista de compras e extrair os itens da lista` +
-                    `você deve responder apenas com os itens da lista, sem explicações` +
-                    `sempre responda no formato: {"items": [nome do item 1, nome do item 2, ...]}`,
-                messages: [
-                    {
-                        role: 'user',
-                        content: [
-                            {
-                                type: 'image',
-                                image: photo
-                            },
-                        ],
-                    },
-                ]
-            });
-
-            const response = result.content.map((c: any) => c?.text ?? '').join('')
-
-            alert(response);
-        } catch (error) { }
-        finally { setLoalist(true) }
-    }
 
     const processProduct = async (photo?: string) => {
         try {
@@ -201,44 +161,76 @@ export const Home = () => {
                 <img src={image} alt="Foto tirada" style={{ width: "100%", marginTop: 16, borderRadius: 8, border: "1px solid #ccc" }} />
             )}
 
-            <div>
-                <h2>
-                    lista de compras
+            <div style={{ marginTop: 32, padding: 20, border: "1px solid #eee", borderRadius: 8, background: "#f5f5f5" }}>
+                <h2 style={{ marginBottom: 16, color: "#34495e", textAlign: "center" }}>
+                    Lista de compras
                 </h2>
+
                 <button
-                    style={{ display: "block", width: "100%", padding: "10px 0", background: "#3498db", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, cursor: "pointer", marginBottom: 16 }}
-                    onClick={handleOpenCamera2}
+                    style={{
+                        display: "block",
+                        margin: "0 auto 16px",
+                        padding: "8px 16px",
+                        background: "#8e44ad",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 4,
+                        fontSize: 15,
+                        cursor: "pointer"
+                    }}
+                    onClick={() => {
+                        const name = prompt("Nome do item")
+                        const quantidade = parseInt(prompt("Quantidade") || "1")
+                        if (!name) return alert("Nome é obrigatório")
+                        if (quantidade <= 0 || isNaN(quantidade)) return alert("Quantidade inválida")
+                        setCheckList([...checkList, { name, quantidade }])
+                    }}
                 >
-                    analisar lista de compras
+                    Adicionar item
                 </button>
-                {cameraOpen2 && (
-                    <div style={{ marginBottom: 16, textAlign: "center" }}>
-                        <Camera
-                            ref={camera}
-                            facingMode='environment'
-                            aspectRatio={16 / 9}
-                            errorMessages={{
-                                noCameraAccessible: "Câmera não acessível",
-                                permissionDenied: "Permissão negada",
-                                switchCamera: "Trocar câmera",
-                                canvas: "Erro no canvas"
-                            }}
-                        />
-                        {
-                            load ? <span style={{ display: "block", margin: "12px 0", color: "#888" }}>Processando...</span>
-                                : <button
-                                    style={{ marginTop: 12, padding: "8px 16px", background: "#27ae60", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" }}
-                                    onClick={handleTakePhotoToList}
+
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                    {checkList.map((item, index) => {
+                        return (
+                            <li
+                                key={index}
+                                style={{
+                                    marginBottom: 12,
+                                    padding: 10,
+                                    border: "1px solid #ddd",
+                                    borderRadius: 6,
+                                    background: "#fff",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between",
+                                    gap: 8
+                                }}
+                            >
+                                <span style={{ fontWeight: "bold", color: "#2c3e50" }}>
+                                    {item.name}
+                                </span>
+                                <span style={{ color: "#7f8c8d" }}>
+                                    x {item.quantidade}
+                                </span>
+                                <button
+                                    style={{
+                                        padding: "6px 12px",
+                                        background: "#e74c3c",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: 4,
+                                        cursor: "pointer"
+                                    }}
+                                    onClick={() => {
+                                        setCheckList(checkList.filter((_, i) => i !== index))
+                                    }}
                                 >
-                                    Tirar foto
+                                    Deletar
                                 </button>
-                        }
-                    </div>
-                )}
-                {loadlist && <span style={{ display: "block", margin: "12px 0", color: "#888" }}>Processando a lista...</span>}
-                {image2 && (
-                    <img src={image2} alt="Foto tirada" style={{ width: "100%", marginTop: 16, borderRadius: 8, border: "1px solid #ccc" }} />
-                )}
+                            </li>
+                        )
+                    })}
+                </ul>
             </div>
         </div>
     );
