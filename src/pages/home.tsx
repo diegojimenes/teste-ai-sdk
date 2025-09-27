@@ -107,7 +107,7 @@ export const Home = () => {
 
                 </div>
             )}
-
+            {load && <span>Processando...</span>}
             {image && (
                 <img src={image} alt="Foto tirada" />
             )}
