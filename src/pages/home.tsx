@@ -46,7 +46,10 @@ export const Home = () => {
                     `você vai receber uma lista de comprar e uma lista com os itens que ja foram comprados` +
                     `você deve responder apenas com a lista de itens que faltam comprar, sem explicações` +
                     `se todos os itens ja foram comprados, responda apenas com "Todos os itens ja foram comprados"` +
-                    `sempre responda no formato: [lista de itens que faltam comprar]`,
+                    `sempre responda no formato: 
+                    - item1
+                    - item2
+                    - item3`,
                 prompt: `
                 lista de compras: ${JSON.stringify(checklist)}
                 itens ja comprados: ${JSON.stringify(newList)}
