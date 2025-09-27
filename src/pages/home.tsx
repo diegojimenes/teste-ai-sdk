@@ -10,7 +10,13 @@ export const Home = () => {
     const [image, setImage] = useState<string | null>(null);
     const [cameraOpen, setCameraOpen] = useState(false);
     const [load, setLoad] = useState(false);
-    const [list, setList] = useState<{ productName: string; price: string }[]>([]);
+    const [list, setList] = useState<{
+        productName: string;
+        price: string;
+        unitPrice: string;
+        quantidade: number;
+    }[]>([]);
+
     const [total, setTotal] = useState(0)
 
     const handleOpenCamera = async () => {
@@ -60,12 +66,26 @@ export const Home = () => {
                 alert("Não foi possível identificar o produto ou o preço, tente novamente");
                 return;
             }
+            const parsed = JSON.parse(response)
 
-            const newList = [...list, { ...JSON.parse(response) }]
+            if (!parsed.productName || !parsed.price) {
+                alert("Não foi possível identificar o produto ou o preço, tente novamente");
+                return;
+            }
+
+            const quantidade = parseInt(prompt("Qual a quantidade?") || "1")
+
+            const newList = [...list, {
+                productName: parsed.productName,
+                unitPrice: parsed.price,
+                price: (parseFloat(parsed.price.replace(',', '.')) * quantidade).toFixed(2),
+                quantidade: quantidade
+            }]
 
             const newTotal = newList.reduce((acc, item) => {
                 return acc + parseFloat(item.price.replace(',', '.'))
             }, 0)
+
             setTotal(newTotal)
             setList(newList)
         } catch (error) {
@@ -80,7 +100,7 @@ export const Home = () => {
             <ul>
                 {list.map((item, index) => {
                     return <li key={item.productName}>
-                        {item.productName} - {item.price} <br />
+                        {item.productName} - {item.unitPrice} quantidade: {item.quantidade}<br />
                         <button onClick={() => {
                             setList(list.filter((_, i) => i !== index))
                             const newTotal = list.filter((_, i) => i !== index).reduce((acc, item) => {
