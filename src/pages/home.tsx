@@ -3,13 +3,14 @@ import { useRef, useState } from "react";
 import { generateText } from "ai";
 import { gemma } from "../providers/lmstudio";
 
-// import { image1 } from "../assets/image1"
-
 export const Home = () => {
     const camera = useRef<any>(null);
     const [image, setImage] = useState<string | null>(null);
+    const [image2, setImage2] = useState<string | null>(null);
     const [cameraOpen, setCameraOpen] = useState(false);
+    const [cameraOpen2, setCameraOpen2] = useState(false);
     const [load, setLoad] = useState(false);
+    const [loadlist, setLoalist] = useState(false);
     const [list, setList] = useState<{
         productName: string;
         price: string;
@@ -23,6 +24,11 @@ export const Home = () => {
         setCameraOpen(true);
     };
 
+
+    const handleOpenCamera2 = async () => {
+        setCameraOpen2(true);
+    };
+
     const handleTakePhoto = () => {
         if (camera.current) {
             const photo = camera.current.takePhoto();
@@ -31,6 +37,45 @@ export const Home = () => {
             processProduct(photo);
         }
     };
+
+    const handleTakePhotoToList = () => {
+        if (camera.current) {
+            const photo = camera.current.takePhoto();
+            setImage2(photo);
+            setCameraOpen2(false);
+            analizeList(photo);
+        }
+    };
+
+    const analizeList = async (photo?: string) => {
+        try {
+            setLoalist(true)
+            const result = await generateText({
+                model: gemma,
+                system:
+                    `você é um assistente de compra` +
+                    `você vai receber uma imagem de uma lista de compras e extrair os itens da lista` +
+                    `você deve responder apenas com os itens da lista, sem explicações` +
+                    `sempre responda no formato: {"items": [nome do item 1, nome do item 2, ...]}`,
+                messages: [
+                    {
+                        role: 'user',
+                        content: [
+                            {
+                                type: 'image',
+                                image: photo
+                            },
+                        ],
+                    },
+                ]
+            });
+
+            const response = result.content.map((c: any) => c?.text ?? '').join('')
+
+            alert(response);
+        } catch (error) { }
+        finally { setLoalist(true) }
+    }
 
     const processProduct = async (photo?: string) => {
         try {
@@ -155,6 +200,46 @@ export const Home = () => {
             {image && (
                 <img src={image} alt="Foto tirada" style={{ width: "100%", marginTop: 16, borderRadius: 8, border: "1px solid #ccc" }} />
             )}
+
+            <div>
+                <h2>
+                    lista de compras
+                </h2>
+                <button
+                    style={{ display: "block", width: "100%", padding: "10px 0", background: "#3498db", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, cursor: "pointer", marginBottom: 16 }}
+                    onClick={handleOpenCamera2}
+                >
+                    analisar lista de compras
+                </button>
+                {cameraOpen2 && (
+                    <div style={{ marginBottom: 16, textAlign: "center" }}>
+                        <Camera
+                            ref={camera}
+                            facingMode='environment'
+                            aspectRatio={16 / 9}
+                            errorMessages={{
+                                noCameraAccessible: "Câmera não acessível",
+                                permissionDenied: "Permissão negada",
+                                switchCamera: "Trocar câmera",
+                                canvas: "Erro no canvas"
+                            }}
+                        />
+                        {
+                            load ? <span style={{ display: "block", margin: "12px 0", color: "#888" }}>Processando...</span>
+                                : <button
+                                    style={{ marginTop: 12, padding: "8px 16px", background: "#27ae60", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" }}
+                                    onClick={handleTakePhotoToList}
+                                >
+                                    Tirar foto
+                                </button>
+                        }
+                    </div>
+                )}
+                {load && <span style={{ display: "block", margin: "12px 0", color: "#888" }}>Processando...</span>}
+                {image2 && (
+                    <img src={image2} alt="Foto tirada" style={{ width: "100%", marginTop: 16, borderRadius: 8, border: "1px solid #ccc" }} />
+                )}
+            </div>
         </div>
     );
 };
