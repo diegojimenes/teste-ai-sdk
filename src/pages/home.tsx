@@ -1,5 +1,5 @@
 import { Camera } from "react-camera-pro";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { generateText } from "ai";
 import { gemma } from "../providers/lmstudio";
 
@@ -24,9 +24,6 @@ export const Home = () => {
     const handleOpenCamera = async () => {
         setCameraOpen(true);
     };
-
-
-
 
     const handleTakePhoto = () => {
         if (camera.current) {
@@ -128,6 +125,22 @@ export const Home = () => {
             setLoad(false)
         }
     };
+
+    useEffect(() => {
+        window.localStorage.setItem('list', JSON.stringify(list))
+    }, [list])
+
+    useEffect(() => {
+        const saved = window.localStorage.getItem('list')
+        if (saved) {
+            const list = JSON.parse(saved)
+            setList(list)
+            const newTotal = list.reduce((acc: number, item: any) => {
+                return acc + parseFloat(item.price.replace(',', '.'))
+            }, 0)
+            setTotal(newTotal)
+        }
+    }, [])
 
     return (
         <div style={{ maxWidth: 400, margin: "40px auto", padding: 24, border: "1px solid #ddd", borderRadius: 8, background: "#fafafa" }}>
