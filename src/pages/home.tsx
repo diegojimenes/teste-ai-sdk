@@ -117,6 +117,7 @@ export const Home = () => {
 
             setTotal(newTotal)
             setList(newList)
+            localStorage.setItem('list', JSON.stringify(newList))
 
             // await checkListItes(checkList, newList)
         } catch (error) {
@@ -126,12 +127,10 @@ export const Home = () => {
         }
     };
 
-    useEffect(() => {
-        localStorage.setItem('list', JSON.stringify(list))
-    }, [list])
 
     useEffect(() => {
         const saved = localStorage.getItem('list')
+        alert(saved)
         if (saved) {
             const list = JSON.parse(saved)
             setList(list)
