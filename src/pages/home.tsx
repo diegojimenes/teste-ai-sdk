@@ -78,9 +78,16 @@ export const Home = () => {
     return (
         <div>
             <ul>
-                {list.map((item) => {
+                {list.map((item, index) => {
                     return <li key={item.productName}>
                         {item.productName} - {item.price} <br />
+                        <button onClick={() => {
+                            setList(list.filter((_, i) => i !== index))
+                            const newTotal = list.filter((_, i) => i !== index).reduce((acc, item) => {
+                                return acc + parseFloat(item.price.replace(',', '.'))
+                            }, 0)
+                            setTotal(newTotal)
+                        }}>deletar</button>
                     </li>
                 })}
             </ul>
