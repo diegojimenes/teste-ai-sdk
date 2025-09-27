@@ -9,7 +9,6 @@ export const Home = () => {
     const camera = useRef<any>(null);
     const [image, setImage] = useState<string | null>(null);
     const [cameraOpen, setCameraOpen] = useState(false);
-    const [permissionDenied, setPermissionDenied] = useState(false);
     const [list, setList] = useState<{ productName: string; price: string }[]>([]);
     const [total, setTotal] = useState(0)
 
@@ -50,7 +49,7 @@ export const Home = () => {
             ]
         });
 
-        const response = result.content.map(c => c.text).join('')
+        const response = result.content.map((c: any) => c?.text ?? '').join('')
         const newList = [...list, { ...JSON.parse(response) }]
 
         const newTotal = newList.reduce((acc, item) => {
@@ -72,9 +71,6 @@ export const Home = () => {
             <h1>{total.toFixed(2)}</h1>
             {/* <button onClick={() => processProduct(image1)}>image1</button> */}
             <button onClick={handleOpenCamera}>Adicionar um novo produto</button>
-            {permissionDenied && (
-                <div>Permissão da câmera negada. Por favor, permita o acesso à câmera.</div>
-            )}
             {cameraOpen && (
                 <div>
                     <Camera
