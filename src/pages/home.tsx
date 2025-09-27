@@ -37,6 +37,30 @@ export const Home = () => {
         }
     };
 
+    const checkListItes = async (checklist: any, newList: any) => {
+        try {
+            const result = await generateText({
+                model: gemma,
+                system:
+                    `você é um assistente de compra` +
+                    `você vai receber uma lista de comprar e uma lista com os itens que ja foram comprados` +
+                    `você deve responder apenas com a lista de itens que faltam comprar, sem explicações` +
+                    `se todos os itens ja foram comprados, responda apenas com "Todos os itens ja foram comprados"` +
+                    `sempre responda no formato: [lista de itens que faltam comprar]`,
+                prompt: `
+                lista de compras: ${JSON.stringify(checklist)}
+                itens ja comprados: ${JSON.stringify(newList)}
+                `
+            });
+
+            const response = result.content.map((c: any) => c?.text ?? '').join('')
+
+            alert(response)
+        } catch (error) {
+            alert("Error processing product");
+        }
+    }
+
     const processProduct = async (photo?: string) => {
         try {
             setLoad(true)
@@ -93,6 +117,8 @@ export const Home = () => {
 
             setTotal(newTotal)
             setList(newList)
+
+            await checkListItes(checkList, newList)
         } catch (error) {
             alert("Error processing product");
         } finally {
