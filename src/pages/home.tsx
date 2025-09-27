@@ -127,11 +127,11 @@ export const Home = () => {
     };
 
     useEffect(() => {
-        window.localStorage.setItem('list', JSON.stringify(list))
+        localStorage.setItem('list', JSON.stringify(list))
     }, [list])
 
     useEffect(() => {
-        const saved = window.localStorage.getItem('list')
+        const saved = localStorage.getItem('list')
         if (saved) {
             const list = JSON.parse(saved)
             setList(list)
