@@ -34,6 +34,7 @@ export const Home = () => {
                 `você deve responder apenas com o nome do produto e o preço, sem explicações` +
                 `se não conseguir identificar o produto, responda apenas com "Produto não identificado"` +
                 `se não conseguir identificar o preço, responda apenas com "Preço não identificado"` +
+                `caso tenha preço para atacado e varejo sempre escolha o preço do varejo` +
                 `se não conseguir identificar nenhum dos dois, responda apenas com "Produto e preço não identificados"` +
                 `sempre responda no formato: {"productName": nome do produto, "price": preço} para o preço sempre use ponto em vez de virgula ex: 99.99 1.00 999.000.999"`,
             messages: [
