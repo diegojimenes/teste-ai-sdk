@@ -9,6 +9,7 @@ export const Home = () => {
     const camera = useRef<any>(null);
     const [image, setImage] = useState<string | null>(null);
     const [cameraOpen, setCameraOpen] = useState(false);
+    const [load, setLoad] = useState(false);
     const [list, setList] = useState<{ productName: string; price: string }[]>([]);
     const [total, setTotal] = useState(0)
 
@@ -85,9 +86,14 @@ export const Home = () => {
                             canvas: "Erro no canvas"
                         }}
                     />
-                    <button onClick={handleTakePhoto}>Tirar foto</button>
+                    {
+                        load ? <span>Processando...</span>
+                            : <button onClick={handleTakePhoto}>Tirar foto</button>
+                    }
+
                 </div>
             )}
+
             {image && (
                 <img src={image} alt="Foto tirada" />
             )}
