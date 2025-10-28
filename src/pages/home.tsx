@@ -141,6 +141,40 @@ export const Home = () => {
         }
     }, [])
 
+    const generateProductList = async (checklist: any) => {
+        try {
+            const result = await generateText({
+                model: gemma,
+                system:
+                    `você é um assistente de compra` +
+                    `você vai receber uma lista de comprar em json e com ela deve gerar um texto formatado para o usuario salvar` +
+                    `sempre responda no formato: 
+                    - item1: preço x quantidade
+                    - item2: preço x quantidade
+                    - item3: preço x quantidade`,
+                prompt: `
+                lista de compras: ${JSON.stringify(checklist)}
+                `
+            });
+
+            const response = result.content.map((c: any) => c?.text ?? '').join('')
+
+            return response
+        } catch (error) {
+            alert("Error processing product");
+        }
+    }
+
+    const exportToClipboard = async () => {
+        const listProduct = await generateProductList(list ?? {})
+
+        if (!listProduct) return;
+
+        navigator.clipboard.writeText(listProduct).then(() => {
+            alert("Texto copiado para a área de transferência!");
+        })
+    }
+
     return (
         <div style={{ maxWidth: 400, margin: "40px auto", padding: 24, border: "1px solid #ddd", borderRadius: 8, background: "#fafafa" }}>
             <ul style={{ listStyle: "none", padding: 0 }}>
@@ -174,6 +208,12 @@ export const Home = () => {
                 onClick={handleOpenCamera}
             >
                 Adicionar um novo produto
+            </button>
+            <button
+                style={{ display: "block", width: "100%", padding: "10px 0", background: "#3498db", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, cursor: "pointer", marginBottom: 16 }}
+                onClick={exportToClipboard}
+            >
+                Copiar lista de compras
             </button>
             {cameraOpen && (
                 <div style={{ marginBottom: 16, textAlign: "center" }}>
