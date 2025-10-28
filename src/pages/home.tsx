@@ -147,6 +147,15 @@ export const Home = () => {
         })
     }
 
+    const clearList = () => {
+        if (confirm("Tem certeza que deseja limpar a lista de compras? Esta ação não pode ser desfeita.")) {
+            setList([])
+            setTotal(0)
+            localStorage.removeItem('list')
+        }
+    }
+
+
     return (
         <div style={{ maxWidth: 400, margin: "40px auto", padding: 24, border: "1px solid #ddd", borderRadius: 8, background: "#fafafa" }}>
             <ul style={{ listStyle: "none", padding: 0 }}>
@@ -186,6 +195,12 @@ export const Home = () => {
                 onClick={exportToClipboard}
             >
                 Copiar lista de compras
+            </button>
+            <button
+                style={{ display: "block", width: "100%", padding: "10px 0", background: "#3498db", color: "#fff", border: "none", borderRadius: 4, fontSize: 16, cursor: "pointer", marginBottom: 16 }}
+                onClick={clearList}
+            >
+                Limpar lista de compras
             </button>
             {cameraOpen && (
                 <div style={{ marginBottom: 16, textAlign: "center" }}>
