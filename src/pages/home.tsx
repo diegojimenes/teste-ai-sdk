@@ -141,36 +141,8 @@ export const Home = () => {
         }
     }, [])
 
-    const generateProductList = async (checklist: any) => {
-        try {
-            const result = await generateText({
-                model: gemma,
-                system:
-                    `você é um assistente de compra` +
-                    `você vai receber uma lista de comprar em json e com ela deve gerar um texto formatado para o usuario salvar` +
-                    `sempre responda no formato: 
-                    - item1: preço x quantidade
-                    - item2: preço x quantidade
-                    - item3: preço x quantidade`,
-                prompt: `
-                lista de compras: ${JSON.stringify(checklist)}
-                `
-            });
-
-            const response = result.content.map((c: any) => c?.text ?? '').join('')
-
-            return response
-        } catch (error) {
-            alert("Error processing product");
-        }
-    }
-
     const exportToClipboard = async () => {
-        const listProduct = await generateProductList(list ?? {})
-
-        if (!listProduct) return;
-
-        navigator.clipboard.writeText(listProduct).then(() => {
+        navigator.clipboard.writeText(JSON.stringify(list)).then(() => {
             alert("Texto copiado para a área de transferência!");
         })
     }
