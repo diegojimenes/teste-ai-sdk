@@ -955,6 +955,11 @@ color-name@~1.1.4:
   resolved "https://registry.yarnpkg.com/color-name/-/color-name-1.1.4.tgz#c2a09a87acbde69543de6f63fa3995c826c536a2"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
 
+compress-base64@^7.0.10:
+  version "7.0.10"
+  resolved "https://registry.yarnpkg.com/compress-base64/-/compress-base64-7.0.10.tgz#6b5923ce04838e4dc9be4f39209544bedcd79fd4"
+  integrity sha512-Px9JxDqWMHuoJHF9UbpTvJLn7x/Wft1HpREa5uFNnJwnNGH94IEyTf2Tt2yVjUKT5l6350eWUYvMZjB0zxMsgQ==
+
 compressorjs@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/compressorjs/-/compressorjs-1.2.1.tgz#4dee18ef5032f8166bd0a3258f045eda2cd07671"

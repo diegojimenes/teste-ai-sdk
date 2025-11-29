@@ -1,7 +1,7 @@
 import { Camera } from "react-camera-pro";
 import { useRef, useState, useContext } from "react";
 import { generateText } from "ai";
-import Compressor from 'compressorjs';
+import compress from 'compress-base64';
 import { ShoppingContext } from "../providers/ShoppingContext";
 // import type { ShoppingListItem } from "../providers/ShoppingContext";
 import { gemma } from "../providers/lmstudio";
@@ -19,20 +19,35 @@ export const ProductScanner: React.FC = () => {
         setCameraOpen(true);
     };
 
-    const handleTakePhoto = () => {
+    const handleTakePhoto = async () => {
         if (camera.current) {
-            const photo = camera.current.takePhoto();
-            new Compressor(photo, {
-                quality: 0.6,
-                success(photo: any) {
-                    setImage(photo);
-                    setCameraOpen(false);
-                    processProduct(photo);
-                },
-                error(err) {
-                    console.log(err.message);
-                }
-            })
+            const photo = await camera.current.takePhoto();
+            setLoad(true)
+            compress(photo, {
+                width: 200,
+                height: 200,
+                type: 'image/png',
+                max: 200,
+                min: 20,
+                quality: 0.4,
+            }).then((result: any) => {
+                setImage(result);
+                setCameraOpen(false);
+                processProduct(result);
+            });
+            // new Compressor(blob, {
+            //     quality: 0.6,
+            //     async success(photo: any) {
+            //         console.log(photo)
+            //         // const base64 = await blobToBase64(photo);
+            // setImage(base64);
+            // setCameraOpen(false);
+            // processProduct(base64);
+            //     },
+            //     error(err) {
+            //         console.log(err.message);
+            //     }
+            // })
 
         }
     };
@@ -151,6 +166,7 @@ export const ProductScanner: React.FC = () => {
             // }
 
         } catch (error) {
+            console.log(error)
             alert("Error processing product");
         } finally {
             setLoad(false)

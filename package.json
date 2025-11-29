@@ -12,6 +12,7 @@
   "dependencies": {
     "@ai-sdk/openai-compatible": "^1.0.19",
     "ai": "^5.0.56",
+    "compress-base64": "^7.0.10",
     "compressorjs": "^1.2.1",
     "react": "^19.1.1",
     "react-camera-pro": "^1.4.0",
