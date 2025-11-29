@@ -1,7 +1,7 @@
 import { Camera } from "react-camera-pro";
 import { useRef, useState, useContext } from "react";
 import { generateText } from "ai";
-// import compress from 'compress-base64';
+import compress from 'compress-base64';
 import { ShoppingContext } from "../providers/ShoppingContext";
 // import type { ShoppingListItem } from "../providers/ShoppingContext";
 import { gemma } from "../providers/lmstudio";
@@ -23,18 +23,18 @@ export const ProductScanner: React.FC = () => {
         if (camera.current) {
             const photo = await camera.current.takePhoto();
             setLoad(true)
-            // compress(photo, {
-            //     width: 200,
-            //     height: 200,
-            //     type: 'image/png',
-            //     max: 200,
-            //     min: 20,
-            //     quality: 0.4,
-            // }).then((result: any) => {
-            setImage(photo);
-            setCameraOpen(false);
-            processProduct(photo);
-            // });
+            compress(photo, {
+                width: 200,
+                height: 200,
+                type: 'image/png',
+                max: 200,
+                min: 20,
+                quality: 0.4,
+            }).then((result: any) => {
+                setImage(result);
+                setCameraOpen(false);
+                processProduct(result);
+            });
             // new Compressor(blob, {
             //     quality: 0.6,
             //     async success(photo: any) {
