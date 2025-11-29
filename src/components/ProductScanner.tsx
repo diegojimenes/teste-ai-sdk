@@ -3,11 +3,13 @@ import { useRef, useState, useContext } from "react";
 import { generateText } from "ai";
 import Compressor from 'compressorjs';
 import { ShoppingContext } from "../providers/ShoppingContext";
-import type { ShoppingListItem } from "../providers/ShoppingContext";
+// import type { ShoppingListItem } from "../providers/ShoppingContext";
 import { gemma } from "../providers/lmstudio";
 
 export const ProductScanner: React.FC = () => {
-    const { list, setList, setTotal, checkList, setCheckList } = useContext(ShoppingContext);
+    const { list, setList, setTotal,
+        //  checkList, setCheckList 
+    } = useContext(ShoppingContext);
     const camera = useRef<any>(null);
     const [image, setImage] = useState<string | null>(null);
     const [cameraOpen, setCameraOpen] = useState(false);
@@ -35,56 +37,56 @@ export const ProductScanner: React.FC = () => {
         }
     };
 
-    const checkListItem = async (checkList: ShoppingListItem[], productName: string) => {
-        try {
-            console.log("Checking for product:", productName);
-            console.log("Current checkList:", checkList);
+    // const checkListItem = async (checkList: ShoppingListItem[], productName: string) => {
+    //     try {
+    //         console.log("Checking for product:", productName);
+    //         console.log("Current checkList:", checkList);
 
-            const result = await generateText({
-                model: gemma,
-                system: `
-                    Você é um assistente de compras. Sua tarefa é encontrar um item em uma lista de compras que corresponda a um nome de produto fornecido.
-                    - A lista de compras será fornecida como um array de objetos JSON.
-                    - O nome do produto a ser encontrado será uma string.
-                    - Você deve retornar apenas o objeto JSON do item correspondente da lista.
-                    - Se nenhum item correspondente for encontrado, você deve retornar um objeto JSON com a propriedade "name" como "Produto não encontrado".
-                    - A correspondência não precisa ser exata, pode ser semântica (por exemplo, "maçã" e "maçã gala").
-                    - Responda apenas com o objeto JSON simples: {"name": NOME_DO_PRODUTO, "quantidade": QUANTIDADE_DE_ITENS, "purchased": PURCHASED}.
-                `,
-                messages: [
-                    {
-                        role: 'user',
-                        content: `Aqui está a lista de compras: ${JSON.stringify(checkList)}. Encontre o item correspondente a "${productName}".`,
-                    },
-                ]
-            });
+    //         const result = await generateText({
+    //             model: gemma,
+    //             system: `
+    //                 Você é um assistente de compras. Sua tarefa é encontrar um item em uma lista de compras que corresponda a um nome de produto fornecido.
+    //                 - A lista de compras será fornecida como um array de objetos JSON.
+    //                 - O nome do produto a ser encontrado será uma string.
+    //                 - Você deve retornar apenas o objeto JSON do item correspondente da lista.
+    //                 - Se nenhum item correspondente for encontrado, você deve retornar um objeto JSON com a propriedade "name" como "Produto não encontrado".
+    //                 - A correspondência não precisa ser exata, pode ser semântica (por exemplo, "maçã" e "maçã gala").
+    //                 - Responda apenas com o objeto JSON simples: {"name": NOME_DO_PRODUTO, "quantidade": QUANTIDADE_DE_ITENS, "purchased": PURCHASED}.
+    //             `,
+    //             messages: [
+    //                 {
+    //                     role: 'user',
+    //                     content: `Aqui está a lista de compras: ${JSON.stringify(checkList)}. Encontre o item correspondente a "${productName}".`,
+    //                 },
+    //             ]
+    //         });
 
-            const response = result.content.map((c: any) => c?.text ?? '').join('');
-            console.log("AI response:", response);
+    //         const response = result.content.map((c: any) => c?.text ?? '').join('');
+    //         console.log("AI response:", response);
 
-            const parsed = JSON.parse(response);
-            console.log("Parsed AI response:", parsed);
+    //         const parsed = JSON.parse(response);
+    //         console.log("Parsed AI response:", parsed);
 
-            if (parsed.name === "Produto não encontrado") {
-                console.log("Product not found in checklist.");
-                return;
-            }
+    //         if (parsed.name === "Produto não encontrado") {
+    //             console.log("Product not found in checklist.");
+    //             return;
+    //         }
 
-            const newCheckList = checkList.map(item => {
-                if (item.name === parsed.name) {
-                    console.log("Found matching item:", item);
-                    return { ...item, purchased: true };
-                }
-                return item;
-            });
-            console.log("New checkList:", newCheckList);
+    //         const newCheckList = checkList.map(item => {
+    //             if (item.name === parsed.name) {
+    //                 console.log("Found matching item:", item);
+    //                 return { ...item, purchased: true };
+    //             }
+    //             return item;
+    //         });
+    //         console.log("New checkList:", newCheckList);
 
-            setCheckList(newCheckList);
+    //         setCheckList(newCheckList);
 
-        } catch (error) {
-            console.error("Error checking list item:", error);
-        }
-    }
+    //     } catch (error) {
+    //         console.error("Error checking list item:", error);
+    //     }
+    // }
 
     const processProduct = async (photo?: string) => {
         try {
