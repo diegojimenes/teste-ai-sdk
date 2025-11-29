@@ -2,7 +2,7 @@ import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 
 export const lmstudio = createOpenAICompatible({
     name: 'lmstudio',
-    baseURL: 'http://192.168.100.52:1234/v1',
+    baseURL: 'https://8c1d95081f08.ngrok-free.app/v1',
 });
 
 export const gemma = lmstudio('google/gemma-3-4b')
