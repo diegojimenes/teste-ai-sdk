@@ -29,7 +29,7 @@ export const ProductScanner: React.FC = () => {
                 type: 'image/png',
                 max: 200,
                 min: 20,
-                quality: 0.4,
+                quality: 0.3,
             }).then((result: any) => {
                 setImage(result);
                 setCameraOpen(false);
