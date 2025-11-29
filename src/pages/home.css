@@ -1,0 +1,21 @@
+.home-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 24px;
+}
+
+.shopping-list-container {
+    flex: 1;
+}
+
+.scanner-container {
+    flex: 2;
+}
+
+@media (max-width: 768px) {
+    .home-container {
+        flex-direction: column;
+    }
+}
