@@ -1,6 +1,7 @@
 import { Camera } from "react-camera-pro";
 import { useRef, useState, useContext } from "react";
 import { generateText } from "ai";
+import Compressor from 'compressorjs';
 import { ShoppingContext } from "../providers/ShoppingContext";
 import type { ShoppingListItem } from "../providers/ShoppingContext";
 import { gemma } from "../providers/lmstudio";
@@ -19,9 +20,18 @@ export const ProductScanner: React.FC = () => {
     const handleTakePhoto = () => {
         if (camera.current) {
             const photo = camera.current.takePhoto();
-            setImage(photo);
-            setCameraOpen(false);
-            processProduct(photo);
+            new Compressor(photo, {
+                quality: 0.6,
+                success(photo: any) {
+                    setImage(photo);
+                    setCameraOpen(false);
+                    processProduct(photo);
+                },
+                error(err) {
+                    console.log(err.message);
+                }
+            })
+
         }
     };
 
@@ -134,9 +144,9 @@ export const ProductScanner: React.FC = () => {
             setList(newList)
             localStorage.setItem('list', JSON.stringify(newList))
 
-            if (checkList.length > 0) {
-                await checkListItem(checkList, parsed.productName);
-            }
+            // if (checkList.length > 0) {
+            //     await checkListItem(checkList, parsed.productName);
+            // }
 
         } catch (error) {
             alert("Error processing product");
